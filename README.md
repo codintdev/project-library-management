@@ -31,3 +31,23 @@ En el formulario de reportes se debe permitir mostrar los siguientes reportes:
 
 # NOTA: El aplicativo debe llevar diseño, crear el logo del hospital, imágenes e información acerca del hospital.
 
+# Dashboard
+![Dashboard](./assets/dashboard.png)
+
+# Employees
+![Employee](./assets/employees.png)
+
+# Users
+![Users](./assets/users.png)
+
+# Books
+![Books](./assets/books.png)
+
+# Loans
+![Loans](./assets/loans.png)
+
+# Reservations
+![Reservations](./assets/reservations.png)
+
+# Returns
+![Returns](./assets/devoluciones.png)

@@ -1,6 +1,6 @@
 <?php
 
-require 'datos/Conexion.php';
+require '../datos/Conexion.php';
 
 class Reserva extends Conexion {
 
@@ -35,62 +35,6 @@ class Reserva extends Conexion {
         return $this->id_empleado;
     }
 
-    public function create($id_reserva, $id_usuario, $id_libro, $id_empleado) {
-
-        try {
-            parent::conexion();
-
-            if (isset($_POST['btnAgregarReserva'])) {
-
-                if (empty($_POST['txtIdReserva'])) {
-                    echo '<script>alert("Debes llenar todos los campos"); window.location="reservas.php";</script>';
-                }
-    
-                $validatorLibro = "select cantidad from libro where id_libro = ?";
-                $stmt_validator = $this->conn->prepare($validatorLibro);
-                $stmt_validator->bind_param("i", $id_libro);
-                $resultado = $stmt_validator->execute();
-                $resultado = $stmt_validator->get_result();
-
-                $row = mysqli_fetch_assoc($resultado);
-
-                if ($row['cantidad'] > 0) {
-                    $query = "insert into reserva values (?, ?, ?, current_timestamp, ?)";
-                    $stmt = $this->conn->prepare($query);
-                    $stmt->bind_param("iiii", $id_reserva, $id_usuario, $id_libro, $id_empleado);
-                    $resultado = $stmt->execute();
-        
-                    if (!$resultado) {
-                        echo '<script>alert("!Error al crear la reserva"); window.location="reservas.php"</script>';
-                    }
-
-                    $cantidadLibro = "update libro set cantidad = cantidad - 1 where id_libro = ?";
-                    $stmt_cantidad = $this->conn->prepare($cantidadLibro);
-                    $stmt_cantidad->bind_param("i", $id_libro);
-                    $resultado = $stmt_cantidad->execute();
-
-                    if (!$resultado) {
-                        echo '<script>alert("!Error al actualizar la cantidad del libro"); window.location="reservas.php"</script>' . $resultado->Error();
-                    }
-
-                    $_SESSION['message'] = 'Created';
-                    $_SESSION['message_type'] = 'success';
-        
-                    header("Location: reservas.php");
-                }
-                else {
-                    echo '<script>alert("!Error no hay stock"); window.location="reservas.php"</script>';
-                }
-            }
-    
-            $this->conn->close();
-        }
-        catch (Exception $e) {
-            $this->conn->close();
-            echo "!Error al crear la reserva de la base de datos. " . $e->getMessage();
-        }
-    }
-
     public function index() {
 
         try {
@@ -99,12 +43,14 @@ class Reserva extends Conexion {
             $query = "select res.*, usu.*, lib.*, emp.* from reserva res inner join usuario usu on res.id_usuario = usu.id_usuario inner join libro lib on res.id_libro = lib.id_libro inner join empleado emp on res.id_empleado = emp.id_empleado order by id_reserva asc";
             $resultado = mysqli_query($this->conn, $query);
 
-            while ($row = mysqli_fetch_array($resultado)) {
+            if (!$resultado) {
+                echo "Error de consulta hacia la base de datos! " . mysqli_errno($this->conn);
+            }
 
+            while ($row = mysqli_fetch_array($resultado)) {
                 echo "
                 <tr>
                     <td>" . $row['id_reserva'] . "</td>
-                    <td>" . $row['id_usuario'] . "</td>
                     <td>" . $row['nombre_usuario'] . "</td>
                     <td>" . $row['apellido_usuario'] . "</td>
                     <td>" . $row['direccion'] . "</td>
@@ -125,7 +71,92 @@ class Reserva extends Conexion {
         }
         catch (Exception $e) {
             $this->conn->close();
-            echo "!Error al listar las reservas de la base de datos. " . $e->getMessage();
+            echo "Error al listar las reservas de la base de datos! " . $e->getMessage();
+        }
+    }
+
+    public function create($id_usuario, $id_libro, $id_empleado) {
+
+        try {
+            parent::conexion();
+
+            if (isset($_POST['btnAgregarReserva'])) {
+                if (empty($_POST['txtIdReserva'])) {
+                    echo '<script>alert("Debes llenar todos los campos"); window.location="new_reserva.php";</script>';
+                }
+    
+                $validatorLibro = "select cantidad from libro where id_libro = ?";
+                $stmt_validator = $this->conn->prepare($validatorLibro);
+                $stmt_validator->bind_param("i", $id_libro);
+                $resultado = $stmt_validator->execute();
+                $resultado = $stmt_validator->get_result();
+
+                if (!$resultado) {
+                    echo "Error al listar la cantidad del libro! " . mysqli_errno($this->conn);
+                }
+
+                $row = mysqli_fetch_assoc($resultado);
+
+                if ($row['cantidad'] > 0) {
+                    $query = "insert into reserva values (default, ?, ?, current_timestamp, ?)";
+                    $stmt = $this->conn->prepare($query);
+                    $stmt->bind_param("iii", $id_usuario, $id_libro, $id_empleado);
+                    $resultado = $stmt->execute();
+        
+                    if (!$resultado) {
+                        echo 'Error al crear la reserva! ' . mysqli_errno($this->conn);
+                    }
+
+                    $cantidadLibro = "update libro set cantidad = cantidad - 1 where id_libro = ?";
+                    $stmt_cantidad = $this->conn->prepare($cantidadLibro);
+                    $stmt_cantidad->bind_param("i", $id_libro);
+                    $resultado = $stmt_cantidad->execute();
+
+                    if (!$resultado) {
+                        echo 'Error al actualizar la cantidad del libro! ' . mysqli_errno($this->conn);
+                    }
+
+                    $_SESSION['message'] = 'Created';
+                    $_SESSION['message_type'] = 'success';
+        
+                    //header("Location: reservas.php");
+                }
+                else {
+                    echo '<script>alert("Error no hay stock! "); window.location="new_reserva.php"</script>';
+                }
+            }
+    
+            $this->conn->close();
+        }
+        catch (Exception $e) {
+            $this->conn->close();
+            echo "Error al crear la reserva de la base de datos! " . $e->getMessage();
+        }
+    }
+
+    public function info($id_reserva) {
+
+        try {
+            parent::conexion();
+
+            if (isset($_GET['id_reserva'])) {
+                //$id = $_GET['id_reserva'];
+
+                $query = "select * from reserva where id_reserva = $id_reserva";
+                $result = mysqli_query($this->conn, $query);
+
+                if (mysqli_num_rows($result) == 1) {
+                    $row = mysqli_fetch_array($result);
+                    //$this->setIdReserva($row['id_reserva']);
+                    $this->setIdUsuario($row['id_usuario']);
+                    $this->setIdLibro($row['id_libro']);
+                    $this->setIdEmpleado($row['id_empleado']);
+                }
+            }
+        }
+        catch (Exception $e) {
+            $this->conn->close();
+            echo "Error no se encuentra el libro en la base de datos! " . $e->getMessage();
         }
     }
 
@@ -135,9 +166,8 @@ class Reserva extends Conexion {
             parent::conexion();
 
             if (isset($_POST['btnEditarReserva'])) {
-
-                if (empty($_POST['txtIdReserva'])) {
-                    echo '<script>alert("Debes llenar todos los campos"); window.location="reservas.php";</script>';
+                if (empty($_POST['txtNombreReserva'])) {
+                    echo '<script>alert("Debes llenar todos los campos"); window.location="edit_reserva.php";</script>';
                 }
 
                 $validatorLibro = "select cantidad from libro where id_libro = ?";
@@ -145,6 +175,10 @@ class Reserva extends Conexion {
                 $stmt_validator->bind_param("i", $id_libro);
                 $resultado = $stmt_validator->execute();
                 $resultado = $stmt_validator->get_result();
+
+                if (!$resultado) {
+                    echo "Error al traer el cantidad de libros! " . mysqli_errno($this->conn);
+                }
 
                 $row = mysqli_fetch_assoc($resultado);
 
@@ -155,7 +189,7 @@ class Reserva extends Conexion {
                     $resultado = $stmt->execute();
 
                     if (!$resultado) {
-                        echo '<script>alert("!Error al actualizar la reserva"); window.location="reservas.php"</script>' . $resultado->Error();
+                        echo 'Error al actualizar la reserva! ' . mysqli_errno($this->conn);
                     }
 
                     $cantidadLibro = "update libro set cantidad = cantidad - 1 where id_libro = ?";
@@ -164,13 +198,13 @@ class Reserva extends Conexion {
                     $resultado = $stmt_cantidad->execute();
 
                     if (!$resultado) {
-                        echo '<script>alert("!Error al actualizar la cantidad del libro"); window.location="reservas.php"</script>' . $resultado->Error();
+                        echo 'Error al actualizar la cantidad del libro! ' . mysqli_errno($this->conn);
                     }
 
                     $_SESSION['message'] = 'Saved';
-                    $_SESSION['message_type'] = 'success';
+                    $_SESSION['message_type'] = 'warning';
 
-                    header("Location: reservas.php");
+                    //header("Location: reservas.php");
                 }
             }
 
@@ -178,7 +212,7 @@ class Reserva extends Conexion {
         }
         catch (Exception $e) {
             $this->conn->close();
-            echo "!Error al actualizar la reserva de la base de datos. " . $e->getMessage();
+            echo "Error al actualizar la reserva de la base de datos! " . $e->getMessage();
         }
     }
 
@@ -190,63 +224,38 @@ class Reserva extends Conexion {
             if (isset($_POST['btnEliminarReserva'])) {
 
                 if (empty($_GET['id_reserva'])) {
-                    echo '<script>alert("Debes llenar todos los campos"); window.location="reservas.php";</script>';
+                    echo '<script>alert("Debes llenar todos los campos"); window.location="edit_reserva.php";</script>';
                 }
     
                 $query_update = "update libro l inner join reserva r on l.id_libro = r.id_libro set l.cantidad = l.cantidad + 1 where r.id_reserva = ?";
                 $stmt_update = $this->conn->prepare($query_update);
-                $stmt_update->bind_param("i", $_GET['id_reserva']);
+                $stmt_update->bind_param("i", $id_reserva);
                 $result_update = $stmt_update->execute();
 
                 if (!$result_update) {
-                    echo "Error de consulta al actualizar la reserva";
+                    echo "Error de consulta al actualizar la reserva! " . mysqli_errno($this->conn);
                 }
     
                 $query_delete = "delete from reserva where id_reserva = ?";
                 $stmt_delete = $this->conn->prepare($query_delete);
-                $stmt_delete->bind_param("i", $_GET['id_reserva']);
+                $stmt_delete->bind_param("i", $id_reserva);
                 $resultado_delete = $stmt_delete->execute();
     
                 if (!$resultado_delete) {
-                    echo '<script>alert("!Error al eliminar la reserva"); window.location="reservas.php"</script>';
+                    echo 'Error al eliminar la reserva! ' . mysqli_errno($this->conn);
                 }
 
                 $_SESSION['message'] = 'Deleted';
-                $_SESSION['message_type'] = 'success';
+                $_SESSION['message_type'] = 'danger';
     
-                header("Location: reservas.php");
+                //header("Location: reservas.php");
             }
     
             $this->conn->close();
         }
         catch (Exception $e) {
             $this->conn->close();
-            echo "!Error al eliminar la reserva de la base de datos. " . $e->getMessage();
-        }
-    }
-
-    public function editReservation($id_reserva) {
-
-        try {
-            parent::conexion();
-
-            if (isset($_GET['id_reserva'])) {
-                $id = $_GET['id_reserva'];
-                $query = "select * from reserva where id_reserva = $id";
-                $result = mysqli_query($this->conn, $query);
-
-                if (mysqli_num_rows($result) == 1) {
-                    $row = mysqli_fetch_array($result);
-                    $this->setIdReserva($row['id_reserva']);
-                    $this->setIdUsuario($row['id_usuario']);
-                    $this->setIdLibro($row['id_libro']);
-                    $this->setIdEmpleado($row['id_empleado']);
-                }
-            }
-        }
-        catch (Exception $e) {
-            $this->conn->close();
-            echo "!Error no se encuentra el libro en la base de datos. " . $e->getMessage();
+            echo "Error al eliminar la reserva de la base de datos! " . $e->getMessage();
         }
     }
 }
