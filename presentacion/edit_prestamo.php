@@ -1,6 +1,6 @@
 <?php
 
-require '../logica/Prestamo.php';
+require '../logica-negocio/Prestamo.php';
 
 $objPrestamo = new Prestamo();
 

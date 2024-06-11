@@ -1,6 +1,6 @@
 <?php 
 
-require '../logica/Reserva.php';
+require '../logica-negocio/Reserva.php';
 
 $objReserva = new Reserva();
 $objReserva->create($_POST['txtIdUsuario'], $_POST['txtIdLibro'], $_POST['txtIdEmpleado']);
@@ -15,7 +15,7 @@ if (isset($_POST['btnCancelarReserva'])) {
 
 <div class="container p-4">
 
-    <p class="h1">Create Reservation</p>
+    <p class="h1">Crear Reserva</p>
 
     <?php if (isset($_SESSION['message'])) { ?>
         <div class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
@@ -27,15 +27,15 @@ if (isset($_POST['btnCancelarReserva'])) {
     <div class="card card-body bg-dark">
         <form method="post" action="new_reserva.php" class="row row-cols-3">
             <div class="mb-3 col">
-                <label class="col-sm-4 col-form-label">ID User</label>
+                <label class="col-sm-4 col-form-label">ID Usuario</label>
                 <input type="text" name="txtIdUsuario" class="form-control">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-4 col-form-label">ID Book</label>
+                <label class="col-sm-4 col-form-label">ID Libro</label>
                 <input type="text" name="txtIdLibro" class="form-control">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-6 col-form-label">ID Employee</label>
+                <label class="col-sm-6 col-form-label">ID Empleado</label>
                 <input type="text" name="txtIdEmpleado" class="form-control">
             </div>
 

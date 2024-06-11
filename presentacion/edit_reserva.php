@@ -1,6 +1,6 @@
 <?php
 
-require '../logica/Reserva.php';
+require '../logica-negocio/Reserva.php';
 
 $objReserva = new Reserva();
 
@@ -18,7 +18,7 @@ if (isset($_POST['btnCancelarReserva'])) {
 
 <div class="container p-4">
 
-    <p class="h1">Edit Reservation</p>
+    <p class="h1">Editar Reserva</p>
 
     <?php if (isset($_SESSION['message'])) { ?>
         <div class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
@@ -30,22 +30,22 @@ if (isset($_POST['btnCancelarReserva'])) {
     <div class="card card-body bg-dark">
         <form method="post" action="edit_reserva.php?id_reserva=<?= $_GET['id_reserva']; ?>" class="row row-cols-4">
             <div class="mb-3 col">
-                <label class="col-sm-3 col-form-label">ID User</label>
+                <label class="col-sm-3 col-form-label">ID Usuario</label>
                 <input type="text" name="txtIdUsuario" class="form-control" value="<?= $objReserva->getIdUsuario(); ?>">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-3 col-form-label">ID Book</label>
+                <label class="col-sm-3 col-form-label">ID Libro</label>
                 <input type="text" name="txtIdLibro" class="form-control" value="<?= $objReserva->getIdLibro(); ?>">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-5 col-form-label">ID Employee</label>
+                <label class="col-sm-5 col-form-label">ID Empleado</label>
                 <input type="text" name="txtIdEmpleado" class="form-control" value="<?= $objReserva->getIdEmpleado(); ?>">
             </div>
 
             <div class="d-grid gap-2 d-md-block align-items-start p-2">
                 <input type="submit" name="btnEditarReserva" value="Save changes" class="btn btn-warning">
-                <input type="submit" name="btnCancelarReserva" value="Cancel" class="btn btn-outline-secondary" style="transform: translateY(-0%) translateX(0%);">
-                <input type="submit" name="btnEliminarReserva" value="Delete" class="btn btn-danger" style="transform: translateY(-550%) translateX(1380%);" onclick="return confirm('Seguro que desea eliminar?')">
+                <input type="submit" name="btnCancelarReserva" value="Cancel" class="btn btn-outline-secondary">
+                <input type="submit" name="btnEliminarReserva" value="Delete" class="btn btn-danger" onclick="return confirm('Seguro que desea eliminar?')">
             </div>
         </form>
 

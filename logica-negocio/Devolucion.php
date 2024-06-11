@@ -42,16 +42,17 @@ class Devolucion extends Conexion {
         return $this->id_usuario;
     }
 
+    // Mostrar las devoluciones
     public function index() {
         
         try {
             parent::conexion();
 
-            $query = "select d.*, l.*, u.* from devolucion d inner join libro l on d.id_libro = l.id_libro inner join usuario u on d.id_usuario = u.id_usuario order by id_devolucion asc";
+            $query = "SELECT d.*, l.*, u.* FROM devolucion d INNER JOIN libro l ON d.id_libro = l.id_libro INNER JOIN usuario u ON d.id_usuario = u.id_usuario ORDER BY id_devolucion ASC";
             $resultado = mysqli_query($this->conn, $query);
 
             if (!$resultado) {
-                echo "Error en la query select hacia la base de datos! :(" . mysqli_errno($this->conn);
+                echo "Error en la query SELECT hacia la base de datos! " . mysqli_errno($this->conn);
             }
 
             while ($row = mysqli_fetch_array($resultado)) {
@@ -79,7 +80,7 @@ class Devolucion extends Conexion {
         }
         catch (Exception $e) {
             $this->conn->close();
-            echo 'Error en la función Index hacia la base de datos! ' . $e->getMessage();
+            echo 'Error en la función Index() hacia la base de datos! ' . $e->getMessage();
         }
     }
 
@@ -93,16 +94,16 @@ class Devolucion extends Conexion {
                     echo '<script>alert("Debes llenar todos los campos! "); window.location="new_devolucion.php"</script>';
                 }
 
-                $query = "insert into devolucion values (default, current_timestamp, ?, ?, ?)";
+                $query = "INSERT INTO devolucion VALUES (default, current_timestamp, ?, ?, ?)";
                 $stmt = $this->conn->prepare($query);
                 $stmt->bind_param("iii", $dias_prestamo, $id_libro, $id_usuario);
                 $result = $stmt->execute();
 
                 if (!$result) {
-                    echo "Error en la query insert la devolución! " . mysqli_errno($this->conn);
+                    echo "Error en la query INSERT la devolución! " . mysqli_errno($this->conn);
                 }
 
-                $devolverLibro = "update libro set cantidad = cantidad + 1 where id_libro = ?";
+                $devolverLibro = "UPDATE libro SET cantidad = cantidad + 1 WHERE id_libro = ?";
                 $stmt_sumar = $this->conn->prepare($devolverLibro);
                 $stmt_sumar->bind_param("i", $id_libro);
                 $result_sumar = $stmt_sumar->execute();
@@ -111,7 +112,7 @@ class Devolucion extends Conexion {
                     echo 'Error al actualizar la cantidad del libro ! ' . mysqli_errno($this->conn);
                 }
 
-                $validarMultas = "select multa from usuario where id_usuario = ?";
+                $validarMultas = "SELECT multa FROM usuario WHERE id_usuario = ?";
                 $stmt_validator = $this->conn->prepare($validarMultas);
                 $stmt_validator->bind_param("i", $id_usuario);
                 $result_validator = $stmt_validator->execute();
@@ -126,7 +127,7 @@ class Devolucion extends Conexion {
                 $multa = $row['multa'] + 10000;
 
                 if ($dias_prestamo >= 7) {
-                    $query_multa = "update usuario set multa = ? where id_usuario = ?";
+                    $query_multa = "UPDATE usuario SET multa = ? WHERE id_usuario = ?";
                     $stmt_multa = $this->conn->prepare($query_multa);
                     $stmt_multa->bind_param("ii", $multa, $id_usuario);
                     $result_multa = $stmt_multa->execute();
@@ -156,9 +157,9 @@ class Devolucion extends Conexion {
             parent::conexion();
 
             if (isset($_GET['id_devolucion'])) {
-                $id = $_GET['id_devolucion'];
+                //$id = $_GET['id_devolucion'];
 
-                $query = "select * from devolucion where id_devolucion = $id";
+                $query = "SELECT * FROM devolucion WHERE id_devolucion = $id_devolucion";
                 $result = mysqli_query($this->conn, $query);
 
                 if (!$result) {
@@ -167,7 +168,7 @@ class Devolucion extends Conexion {
 
                 if (mysqli_num_rows($result) == 1) {
                     $row = mysqli_fetch_array($result);
-                    $this->setId($row['id_devolucion']);
+                    //$this->setId($row['id_devolucion']);
                     $this->setFecha($row['fecha']);
                     $this->setDiasPrestamo($row['dias_prestamo']);
                     $this->setIdLibro($row['id_libro']);
@@ -200,7 +201,7 @@ class Devolucion extends Conexion {
         }
         catch(Exception $e) {
             $this->conn->close();
-            echo "Error en la función Edit base de datos! " . $e->getMessage();
+            echo "Error en la función Edit() base de datos! " . $e->getMessage();
         }
     }
 
@@ -214,18 +215,18 @@ class Devolucion extends Conexion {
                     echo '<script>alert("Debes llenar todos los campos"); window.location="edit_devolucion.php";</script>';
                 }
 
-                $query_update = "update libro l inner join devolucion d on l.id_libro = d.id_libro set l.cantidad = l.cantidad - 1 where d.id_devolucion = ?";
+                $query_update = "UPDATE libro l INNER JOIN devolucion d ON l.id_libro = d.id_libro SET l.cantidad = l.cantidad - 1 WHERE d.id_devolucion = ?";
                 $stmt_update = $this->conn->prepare($query_update);
-                $stmt_update->bind_param("i", $_GET['id_devolucion']);
+                $stmt_update->bind_param("i", $id_devolucion);
                 $result_update = $stmt_update->execute();
 
                 if (!$result_update) {
                     echo "Error de consulta al actualizar el prestamo" . mysqli_errno($this->conn);
                 }
 
-                $query = "delete from devolucion where id_devolucion = ?";
+                $query = "DELETE FROM devolucion WHERE id_devolucion = ?";
                 $stmt = $this->conn->prepare($query);
-                $stmt->bind_param("i", $_GET['id_devolucion']);
+                $stmt->bind_param("i", $id_devolucion);
                 $result = $stmt->execute();
 
                 if (!$result) {

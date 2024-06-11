@@ -1,10 +1,9 @@
 <?php 
 
-require '../logica/Empleado.php';
+require '../logica-negocio/Empleado.php';
 
-$objEmpleado = new Empleado();
-
-$objEmpleado->create($_POST['txtNombreEmpleado'], $_POST['txtApellidoEmpleado'], $_POST['txtCargoEmpleado']);
+$empleado = new Empleado();
+$empleado->create($_POST['txtNombreEmpleado'], $_POST['txtApellidoEmpleado'], $_POST['txtCargoEmpleado']);
 
 if (isset($_POST['btnCancelarEmpleado'])) {
     header('Location: empleados.php');
@@ -12,11 +11,11 @@ if (isset($_POST['btnCancelarEmpleado'])) {
 
 ?>
 
-<?php require '../include/header.php'; ?>
+<?php require '../../../include/header.php'; ?>
 
 <div class="container p-4">
 
-    <p class="h1">Create Employee</p>
+    <p class="h1">Crear Empleado</p>
 
     <?php if (isset($_SESSION['message'])) { ?>
         <div class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert" style="width: 20%;">
@@ -28,15 +27,15 @@ if (isset($_POST['btnCancelarEmpleado'])) {
     <div class="card card-body bg-dark">
         <form method="post" action="new_empleado.php" class="row row-cols-3">
             <div class="mb-3 col">
-                <label class="col-sm-3 col-form-label">Name</label>
+                <label class="col-sm-3 col-form-label">Nombre</label>
                 <input type="text" name="txtNombreEmpleado" class="form-control">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-4 col-form-label">Lastname</label>
+                <label class="col-sm-4 col-form-label">Apellido</label>
                 <input type="text" name="txtApellidoEmpleado" class="form-control">
             </div>
             <div class="mb-3 col">
-                <label class="col-sm-3 col-form-label">Charge</label>
+                <label class="col-sm-3 col-form-label">Cargo</label>
                 <input type="text" name="txtCargoEmpleado" class="form-control">
             </div>
 
@@ -49,5 +48,5 @@ if (isset($_POST['btnCancelarEmpleado'])) {
 
 </div>
 
-<?php require '../include/footer.php' ?>
+<?php require '../../../include/footer.php' ?>
 

@@ -1,6 +1,6 @@
 <?php
 
-require '../logica/Libro.php';
+require '../logica-negocio/Libro.php';
 
 $objLibro = new Libro();
 

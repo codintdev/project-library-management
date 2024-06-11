@@ -1,8 +1,8 @@
 <?php
 
-require '../logica/Prestamo.php';
+require '../logica-negocio/Devolucion.php';
 
-$objPrestamo = new Prestamo();
+$devolucion = new Devolucion();
 
 ?>
 
@@ -13,11 +13,11 @@ $objPrestamo = new Prestamo();
   <div class="row">
 
     <div class="col-auto">
-      <p class="h1">Loans</p>
+      <p class="h1">Devoluciones</p>
     </div>
 
     <div class="col-md-8">
-      <a href="new_prestamo.php" class="btn btn-warning" style="transform: translateX(500%);">New Loan</a>
+      <a href="new_devolucion.php" class="btn btn-warning">Nueva Devolución</a>
     </div>
 
     <div class="col-xxl-8">
@@ -25,22 +25,21 @@ $objPrestamo = new Prestamo();
         <thead>
           <tr>
             <th>ID</th>
-            <th>User</th>
-            <th>Lastname</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Book</th>
-            <th>Author</th>
+            <th>Fecha</th>
+            <th>Dias prestamo</th>
+            <th>Titulo</th>
+            <th>Autor</th>
             <th>Stock</th>
-            <th>Category</th>
-            <th>Date loan</th>   
-            <th>Employee</th>
-            <th>Charge</th>
+            <th>Categoria</th>
+            <th>Nombre Usuario</th>
+            <th>Apellido</th>
+            <th>Dirección</th>
+            <th>Telefono</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          <?php $objPrestamo->index(); ?>
+          <?php $devolucion->index(); ?>
         </tbody>
       </table>
     </div>

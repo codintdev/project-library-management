@@ -1,6 +1,6 @@
 <?php
 
-require '../logica/Usuario.php';
+require '../logica-negocio/Usuario.php';
 
 $objUsuario = new Usuario();
 

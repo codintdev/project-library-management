@@ -1,8 +1,8 @@
 <?php
 
-require '../logica/Reserva.php';
+require '../logica-negocio/Reserva.php';
 
-$objReserva = new Reserva();
+$reserva = new Reserva();
 
 ?>
 
@@ -13,11 +13,11 @@ $objReserva = new Reserva();
   <div class="row">
 
     <div class="col-auto">
-      <p class="h1">Reservations</p>
+      <p class="h1">Reservas</p>
     </div>
 
     <div class="col-md-8">
-      <a href="new_reserva.php" class="btn btn-warning" style="transform: translateX(270%);">New Reservation</a>
+      <a href="new_reserva.php" class="btn btn-warning">Nueva Reserva</a>
     </div>
 
     <div class="col-xxl-12">
@@ -25,20 +25,20 @@ $objReserva = new Reserva();
         <thead>
           <tr>
             <th>ID</th>
-            <th>User</th>
-            <th>Lastname</th>
-            <th>Address</th>
-            <th>Phone</th>
-            <th>Book</th>
-            <th>Author</th>
+            <th>Usuario</th>
+            <th>Apellido</th>
+            <th>Dirección</th>
+            <th>Telefono</th>
+            <th>Libro</th>
+            <th>Autor</th>
             <th>Stock</th>
-            <th>Category</th>
-            <th>Date reservation</th>
+            <th>Categoria</th>
+            <th>Fecha reserva</th>
             <th></th>          
           </tr>
         </thead>
         <tbody>
-          <?php $objReserva->index(); ?>
+          <?php $reserva->index(); ?>
         </tbody>
       </table>
     </div>

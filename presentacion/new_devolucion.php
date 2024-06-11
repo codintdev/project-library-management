@@ -1,9 +1,9 @@
 <?php
 
-require '../logica/Devolucion.php';
+require '../logica-negocio/Devolucion.php';
 
-$objDevolucion = new Devolucion();
-$objDevolucion->create($_POST['txtDiasPrestamo'], $_POST['txtIdLibro'], $_POST['txtIdUsuario']);
+$devolucion = new Devolucion();
+$devolucion->create($_POST['txtDiasPrestamo'], $_POST['txtIdLibro'], $_POST['txtIdUsuario']);
 
 if (isset($_POST['btnCancelarDevolucion'])) {
     header('Location: devoluciones.php');
@@ -11,11 +11,11 @@ if (isset($_POST['btnCancelarDevolucion'])) {
 
 ?>
 
-<?php require '../include/header.php'; ?>
+<?php require '../../../include/header.php'; ?>
 
 <div class="container p-4">
 
-    <p class="h1">Create Return</p>
+    <p class="h1">Crear Devolución</p>
 
     <?php if (isset($_SESSION['message'])) { ?>
         <div class="alert alert-<?= $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert" style="width: 20%;">
@@ -48,4 +48,4 @@ if (isset($_POST['btnCancelarDevolucion'])) {
 
 </div>
 
-<?php require '../include/footer.php'; ?>
+<?php require '../../../include/footer.php'; ?>
